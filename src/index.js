@@ -22,7 +22,7 @@ function map(array, fn) {
     let newArray;
 
     for (let i = 0; i < array.length; i++) {
-        newArray[i] = fn(array[i], i, array);
+        newArray[i] = fn(array[i]);
         //newArray.push(fn(array[i], i, arry));
     }
 
