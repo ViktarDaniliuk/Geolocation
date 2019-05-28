@@ -83,8 +83,13 @@ function slice(array, from, to) {
     let newArray = [];
 
     to = typeof to !== 'undefined' ? to : array.length;
+    from = typeof from !== 'undefined' ? from : 0;
     if (to < 0) {
         to = array.length + to;
+    }
+
+    if (from < 0) {
+        from = array.length + from;
     }
 
     for (let i = 0; i < array.length; i++) {
