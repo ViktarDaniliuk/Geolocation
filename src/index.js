@@ -19,11 +19,10 @@ function forEach(array, fn) {
  Посмотрите как работает map и повторите это поведение для массива, который будет передан в параметре array
  */
 function map(array, fn) {
-    let newArray;
+    let newArray = [];
 
     for (let i = 0; i < array.length; i++) {
-        newArray[i] = fn(array[i]);
-        //newArray.push(fn(array[i], i, arry));
+        newArray.push(fn(array[i], i, array));
     }
 
     return newArray;
@@ -36,9 +35,16 @@ function map(array, fn) {
  Посмотрите как работает reduce и повторите это поведение для массива, который будет передан в параметре array
  */
 function reduce(array, fn, initial) {
-    let result = initial;
+    let result = 0;
 
+    if (typeof initial !== 'undefined') {
+        result = initial;
+    }
     for (let i = 0; i < array.length; i++) {
+        if (typeof initial === 'undefined' && i === 0) {
+            result = array[0];
+            continue;
+        }
         result = fn(result, array[i], i, array);
     }
 
@@ -54,12 +60,15 @@ function reduce(array, fn, initial) {
    upperProps({ name: 'Сергей', lastName: 'Петров' }) вернет ['NAME', 'LASTNAME']
  */
 function upperProps(obj) {
-    let keyArr;
+    let keyArr = [];
 
-//    for (let key in obj) {
-//        keyArr.push(key).toUpperCase();
-//    }
-    Object.keys(obj).toUpperCase();
+    for (let key in obj) {
+        keyArr.push(key);
+    }
+
+    for (let i = 0; i < keyArr.length; i++) {
+        keyArr[i] = keyArr[i].toUpperCase();
+    }
 
     return keyArr;
 }
@@ -71,11 +80,16 @@ function upperProps(obj) {
  Посмотрите как работает slice и повторите это поведение для массива, который будет передан в параметре array
  */
 function slice(array, from, to) {
-    let newArray;
+    let newArray = [];
+
+    to = typeof to !== 'undefined' ? to : array.length;
+    if (to < 0) {
+        to = array.length + to;
+    }
 
     for (let i = 0; i < array.length; i++) {
         if (i >= from && i < to) {
-            newArray.push(array[i])
+            newArray.push(array[i]);
         }
     }
 
