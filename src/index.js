@@ -23,7 +23,15 @@ function isAllTrue(array, fn) {
         throw new Error("fn is not a function");
     }
 
-    return fn(array);
+    for (var i = 0; i < array.length; i++) {
+        if (fn(array[i])) {
+            continue;
+        } else {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /*
@@ -43,18 +51,22 @@ function isAllTrue(array, fn) {
    isSomeTrue([1, 2, 3, 4, 5], n => n > 20) // вернет false
  */
 function isSomeTrue(array, fn) {
-}
+    if (array.length === 0 || array.constructor !== Array) {
+        throw new Error("empty array");
+    } else if (typeof fn !== 'function') {
+        throw new Error("fn is not a function");
+    }
 
-//
-////function fn(){
-////
-////}
-//var fn = [3, 9];
-//var arr = [2, 8, 4, 9, 6, 2, 8];
-//var snd;
-//var array = [2, 8];
-//isAllTrue(array, fn);
-//console.log( typeof fn == 'function' );
+    for (var i = 0; i < array.length; i++) {
+        if (!fn(array[i])) {
+            continue;
+        } else {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 /*
  Задание 3:
@@ -68,6 +80,22 @@ function isSomeTrue(array, fn) {
    - fn не является функцией (с текстом "fn is not a function")
  */
 function returnBadArguments(fn) {
+    var arr = (Array.prototype.slice.call(arguments)).slice(1);
+    var exeptionArr = [];
+
+    if (typeof fn !== 'function') {
+        throw new Error("fn is not a function");
+    }
+
+    for (var i = 0; i < arr.length; i++) {
+        try {
+                fn(arr[i]);
+        } catch (error) {
+            exeptionArr.push(arr[i]);
+        }
+    }
+
+    return exeptionArr;
 }
 
 /*
@@ -88,13 +116,35 @@ function returnBadArguments(fn) {
    - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
 function calculator() {
+    var number =
+    if (typeof number !== Number) {
+        throw new Error("number is not a number");
+    } else if (typeof fn !== 'function') {
+        throw new Error("fn is not a function");
+    }
 }
+
+//function fn(a){
+//    if (a % 2 != 0) {
+//        console.log('hi');
+//        throw new Error('not even');
+//    }
+//}
+//
+//returnBadArguments(fn, 4, 2, 9, 2);
+
+//var fn = [3, 9];
+//var arr = [2, 8, 4, 9, 6, 2, 8];
+//var snd;
+//var array = [2, 8];
+//isAllTrue(array, fn);
+//console.log( typeof fn == 'function' );
 
 /* При решении задач, пострайтесь использовать отладчик */
 
-export {
-    isAllTrue,
-    isSomeTrue,
-    returnBadArguments,
-    calculator
-};
+//export {
+//    isAllTrue,
+//    isSomeTrue,
+//    returnBadArguments,
+//    calculator
+//};
