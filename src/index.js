@@ -18,9 +18,9 @@
  */
 function isAllTrue(array, fn) {
     if (array.length === 0 || array.constructor !== Array) {
-        throw new Error("empty array");
+        throw new Error('empty array');
     } else if (typeof fn !== 'function') {
-        throw new Error("fn is not a function");
+        throw new Error('fn is not a function');
     }
 
     for (var i = 0; i < array.length; i++) {
@@ -52,9 +52,9 @@ function isAllTrue(array, fn) {
  */
 function isSomeTrue(array, fn) {
     if (array.length === 0 || array.constructor !== Array) {
-        throw new Error("empty array");
+        throw new Error('empty array');
     } else if (typeof fn !== 'function') {
-        throw new Error("fn is not a function");
+        throw new Error('fn is not a function');
     }
 
     for (var i = 0; i < array.length; i++) {
@@ -84,12 +84,12 @@ function returnBadArguments(fn) {
     var exeptionArr = [];
 
     if (typeof fn !== 'function') {
-        throw new Error("fn is not a function");
+        throw new Error('fn is not a function');
     }
 
     for (var i = 0; i < arr.length; i++) {
         try {
-                fn(arr[i]);
+            fn(arr[i]);
         } catch (error) {
             exeptionArr.push(arr[i]);
         }
@@ -116,35 +116,75 @@ function returnBadArguments(fn) {
    - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
 function calculator() {
-    var number =
-    if (typeof number !== Number) {
-        throw new Error("number is not a number");
-    } else if (typeof fn !== 'function') {
-        throw new Error("fn is not a function");
+    var calc;
+    var arr = Array.prototype.slice.call(arguments);
+
+    function isNumber(number) {
+        var number = typeof number !== 'undefined' ? number : 0;
+            console.log(number);
+            if (typeof number !== 'number') {
+
+                throw new Error('number is not a number');
+            }
+
+        return number;
     }
+
+    calc = {
+        sum: function(number) {
+            let result = number;
+
+            number = isNumber(number);
+            for (let i = 0; i < arr.length; i++) {
+                result += arr[i];
+            }
+
+            return result;
+        },
+        dif: function(number) {
+            let result = number;
+
+            number = isNumber(number);
+            for (let i = 0; i < arr.length; i++) {
+                result -= arr[i];
+            }
+
+            return result;
+        },
+        div: function(number) {
+            number = isNumber(number);
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i] == 0) {
+                    throw new Error('division by 0');
+                }
+            }
+
+            result = arr.reduce(function(a, b) {
+                return a / b;
+            }, number);
+
+            return result;
+        },
+        mul: function(number) {
+            number = isNumber(number);
+            result = arr.reduce(function(a, b) {
+                return a * b;
+            }, number);
+
+            return result;
+        }
+    }
+
+    return calc;
 }
 
-//function fn(a){
-//    if (a % 2 != 0) {
-//        console.log('hi');
-//        throw new Error('not even');
-//    }
-//}
-//
-//returnBadArguments(fn, 4, 2, 9, 2);
-
-//var fn = [3, 9];
-//var arr = [2, 8, 4, 9, 6, 2, 8];
-//var snd;
-//var array = [2, 8];
-//isAllTrue(array, fn);
-//console.log( typeof fn == 'function' );
+//console.log( calculator(4, 5, 8).div('sd'));
 
 /* При решении задач, пострайтесь использовать отладчик */
 
-//export {
-//    isAllTrue,
-//    isSomeTrue,
-//    returnBadArguments,
-//    calculator
-//};
+export {
+    isAllTrue,
+    isSomeTrue,
+    returnBadArguments,
+    calculator
+};
