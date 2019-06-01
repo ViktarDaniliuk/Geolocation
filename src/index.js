@@ -126,27 +126,21 @@ function calculator(number) {
 
     result = number;
     calc = {
-        sum: function() {
-            var arr = Array.prototype.slice.call(arguments);
-
+        sum: function(...arr) {
             for (let i = 0; i < arr.length; i++) {
                 result += arr[i];
             }
 
             return result;
         },
-        dif: function() {
-            var arr = Array.prototype.slice.call(arguments);
-
+        dif: function(...arr) {
             for (let i = 0; i < arr.length; i++) {
                 result -= arr[i];
             }
 
             return result;
         },
-        div: function() {
-            var arr = Array.prototype.slice.call(arguments);
-
+        div: function(...arr) {
             for (let i = 0; i < arr.length; i++) {
                 if (arr[i] == 0) {
                     throw new Error('division by 0');
@@ -159,9 +153,7 @@ function calculator(number) {
 
             return result;
         },
-        mul: function() {
-            var arr = Array.prototype.slice.call(arguments);
-
+        mul: function(...arr) {
             result = arr.reduce(function(a, b) {
                 return a * b;
             }, number);
