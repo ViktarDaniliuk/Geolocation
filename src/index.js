@@ -116,7 +116,7 @@ function returnBadArguments(fn) {
    - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
 function calculator(number) {
-    var number = typeof number !== 'undefined' ? number : 0;
+    number = typeof number !== 'undefined' ? number : 0;
     var calc;
     var result;
 
@@ -128,6 +128,7 @@ function calculator(number) {
     calc = {
         sum: function() {
             var arr = Array.prototype.slice.call(arguments);
+
             for (let i = 0; i < arr.length; i++) {
                 result += arr[i];
             }
@@ -136,6 +137,7 @@ function calculator(number) {
         },
         dif: function() {
             var arr = Array.prototype.slice.call(arguments);
+
             for (let i = 0; i < arr.length; i++) {
                 result -= arr[i];
             }
@@ -144,6 +146,7 @@ function calculator(number) {
         },
         div: function() {
             var arr = Array.prototype.slice.call(arguments);
+
             for (let i = 0; i < arr.length; i++) {
                 if (arr[i] == 0) {
                     throw new Error('division by 0');
@@ -158,6 +161,7 @@ function calculator(number) {
         },
         mul: function() {
             var arr = Array.prototype.slice.call(arguments);
+
             result = arr.reduce(function(a, b) {
                 return a * b;
             }, number);
@@ -168,8 +172,6 @@ function calculator(number) {
 
     return calc;
 }
-
-//console.log( calculator(2).mul(4, 4, 4) );
 
 /* При решении задач, пострайтесь использовать отладчик */
 
