@@ -12,6 +12,7 @@
  */
 function createDivWithText(text) {
     var div = document.createElement('div');
+
     div.innerText = text;
 
     return div;
@@ -50,11 +51,13 @@ function prepend(what, where) {
  */
 function findAllPSiblings(where) {
     var array = [];
+
     [...where.children].filter(function(item, i, arr) {
         if (i < arr.length - 1 && item.nextElementSibling.tagName === 'P') {
             array.push(item);
         }
     })
+
     return array;
 }
 
@@ -148,9 +151,61 @@ function deleteTextNodesRecursive(where) {
      classes: { "some-class-1": 2, "some-class-2": 1 },
      texts: 3
    }
- */
+*/
 function collectDOMStat(root) {
+    var tags = new Set();
+    var classes = new Set();
+    var rootData = {
+        tags: {
 
+        },
+        classes: {
+
+        },
+        texts: 0
+    };
+
+    function count(root) {
+        var child = [...root.childNodes];
+
+        for (var i = 0; i < child.length; i++) {
+            if (child[i].nodeType === 1) {
+                if (tags.has(child[i].tagName)) {
+                    rootData.tags[child[i].tagName] = rootData.tags[child[i].tagName] + 1;
+                } else {
+                    rootData.tags[child[i].tagName] = 1;
+                }
+
+                tags.add(child[i].tagName);
+
+                if (child[i].className) {
+                    child[i].className.split(' ').forEach( function(elem) {
+                        if (classes.has(elem)) {
+                            rootData.classes[elem] = rootData.classes[elem] + 1;
+                        } else {
+                            rootData.classes[elem] = 1;
+                        }
+                    });
+                }
+
+                if (child[i].className) {
+                    child[i].className.split(' ').forEach( function(elem) {
+                        classes.add(elem);
+                    });
+                }
+
+            } else if (child[i].nodeType === 3) {
+                rootData.texts += 1;
+            }
+            if (child[i].hasChildNodes()) {
+                count(child[i]);
+            }
+        }
+    }
+
+    count(root);
+
+    return rootData;
 }
 
 /*
@@ -186,6 +241,36 @@ function collectDOMStat(root) {
    }
  */
 function observeChildNodes(where, fn) {
+    var obj = {};
+    var nodes = [];
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes.length) {
+                obj.type = 'insert';
+            } else if (mutation.removedNodes.length) {
+                obj.type = 'remove';
+            }
+            mutation.addedNodes.forEach(function(item) {
+                nodes.push(item);
+            })
+            mutation.removedNodes.forEach(function(item) {
+                nodes.push(item);
+            })
+        });
+
+        obj.nodes = nodes;
+
+        fn(obj);
+    });
+
+    observer.observe(where, {
+        attributes: true,
+        characterData: true,
+        childList: true,
+        subtree: true,
+        attributeOldValue: true,
+        characterDataOldValue: true
+    });
 }
 
 export {
