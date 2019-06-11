@@ -59,16 +59,16 @@ function loadAndSortTowns() {
     return promise;
 }
 
-let result = loadAndSortTowns();
-
-            console.log(result.constructor.name, ' Promise');
-            console.log(typeof result.then, ' function');
-            console.log(typeof result.catch, ' function');
+//let result = loadAndSortTowns();
+//
+//            console.log(result.constructor.name, ' Promise');
+//            console.log(typeof result.then, ' function');
+//            console.log(typeof result.catch, ' function');
 
 
 //loadAndSortTowns().then(towns => console.log(towns));
 
-//export {
-//    delayPromise,
-//    loadAndSortTowns
-//};
+export {
+    delayPromise,
+    loadAndSortTowns
+};
