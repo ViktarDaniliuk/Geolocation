@@ -10,8 +10,8 @@
  */
 function delayPromise(seconds) {
     var sec = seconds * 1000;
-    var promis = new Promise(function(resolve, reject){
-        setTimeout(function(){
+    var promis = new Promise(function(resolve) {
+        setTimeout(function() {
             resolve();
         }, sec);
     })
@@ -39,32 +39,32 @@ function loadAndSortTowns() {
         xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json', true);
 
         xhr.responseType = 'json';
-        xhr.onload = function(){
-            if (this.status == 200) {
-//                console.log(JSON.parse(this.responseText));
-                var towns = [];
+        xhr.onload = function() {
+            if (xhr.status == 200) {
+                var towns = xhr.response;
 
-//                console.log(this.response);
-//                var townsObj = JSON.parse(this.response);
-                var townsObj = (this.response);
-
-//                console.log(townsObj[3].name);
-                for (var i = 0; i < townsObj.length; i++) {
-                    towns.push(townsObj[i].name);
-                }
-                towns.sort();
-//                console.log(towns);
+                towns.sort(function(a, b) {
+                    if (a.name < b.name) {
+                        return -1;
+                    }
+                    if (a.name > b.name) {
+                        return 1;
+                    }
+                });
 
                 resolve(towns);
             }
-        }
+        };
+
+        xhr.onerror = function() {
+            reject(new Error('Network Error'));
+        };
 
         xhr.send();
     })
+
     return promise;
 }
-
-//loadAndSortTowns().then(towns => console.log(towns));
 
 export {
     delayPromise,
