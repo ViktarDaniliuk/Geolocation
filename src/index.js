@@ -38,12 +38,17 @@ function loadAndSortTowns() {
 
         xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json', true);
 
+        xhr.responseType = 'json';
         xhr.onload = function(){
             if (this.status == 200) {
 //                console.log(JSON.parse(this.responseText));
                 var towns = [];
-                var townsObj = JSON.parse(this.response);
-//                console.log(townsObj);
+
+//                console.log(this.response);
+//                var townsObj = JSON.parse(this.response);
+                var townsObj = (this.response);
+
+//                console.log(townsObj[3].name);
                 for (var i = 0; i < townsObj.length; i++) {
                     towns.push(townsObj[i].name);
                 }
@@ -58,13 +63,6 @@ function loadAndSortTowns() {
     })
     return promise;
 }
-
-//let result = loadAndSortTowns();
-//
-//            console.log(result.constructor.name, ' Promise');
-//            console.log(typeof result.then, ' function');
-//            console.log(typeof result.catch, ' function');
-
 
 //loadAndSortTowns().then(towns => console.log(towns));
 
