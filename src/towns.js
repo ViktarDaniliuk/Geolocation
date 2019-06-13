@@ -37,7 +37,52 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
+    var promise = new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest();
+
+        xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json', true);
+
+        xhr.responseType = 'json';
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState ==4 && xhr.status == 200) {
+                var towns = xhr.response;
+
+                towns.sort(function(a, b) {
+                    if (a.name < b.name) {
+                        return -1;
+                    }
+                    if (a.name > b.name) {
+                        return 1;
+                    }
+                });
+
+                resolve(towns);
+            }
+        };
+
+        xhr.onerror = function() {
+            reject(new Error('Не удалось загрузить города'));
+        };
+
+        xhr.send();
+    })
+
+    return promise;
 }
+
+loadTowns().then(function() {
+    loadingBlock.style.display = 'none';
+    filterBlock.style.display = 'block';
+})
+
+var d = [];
+
+    loadTowns().then(function(towns) {
+        for (var j = 0; j < towns.length; j++) {
+            d.push(towns[j]);
+        }
+    });
 
 /*
  Функция должна проверять встречается ли подстрока chunk в строке full
@@ -51,6 +96,16 @@ function loadTowns() {
    isMatching('Moscow', 'Moscov') // false
  */
 function isMatching(full, chunk) {
+    var flag = false;
+
+    full = full.toUpperCase();
+    chunk = chunk.toUpperCase();
+
+    if (~full.indexOf(chunk)) {
+        return true;
+    }
+
+    return flag;
 }
 
 /* Блок с надписью "Загрузка" */
@@ -62,9 +117,38 @@ const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
 
-filterInput.addEventListener('keyup', function() {
+var chunk = '';
+
+filterInput.addEventListener('keyup', function(e) {
     // это обработчик нажатия кливиш в текстовом поле
+    var full = 'full';
+
+    if (e.key != 'Backspace' && e.key.charCodeAt(0) >= 65 && e.key.charCodeAt(0) <=90 || e.key.charCodeAt(0) >= 97 && e.key.charCodeAt(0) <=122) {
+        chunk += e.key;
+    } else if (e.key == 'Backspace' && chunk.length > 0) {
+        chunk = chunk.substr(0, chunk.length - 1);
+    }
+//    else {
+//        filterInput.onkeypress = function(e) {
+////            e.preventDefault();
+//            return false;/////////////////////////////////
+//        }
+//    }
+
+    filterResult.innerHTML = '';
+    var p = document.createElement('p');
+
+    for (let j = 0; j < d.length; j++) {
+        if(isMatching(d[j].name, chunk) == true && chunk.length != 0) {
+            var p = document.createElement('p');
+            p.innerText = d[j].name;
+            filterResult.appendChild(p);
+        } else {
+            continue;
+        }
+    }
 });
+
 
 export {
     loadTowns,
