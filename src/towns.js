@@ -118,17 +118,9 @@ const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
 
-var chunk = '';
-
 filterInput.addEventListener('keyup', function(e) {
     // это обработчик нажатия кливиш в текстовом поле
-    var full = 'full';
-
-    if ((e.key != 'Backspace' && e.key != 'CapsLock' && e.key != 'Shift') && e.key.charCodeAt(0) >= 65 && e.key.charCodeAt(0) <=90 || e.key.charCodeAt(0) >= 97 && e.key.charCodeAt(0) <=122) {
-        chunk += e.key;
-    } else if (e.key == 'Backspace' && chunk.length > 0) {
-        chunk = chunk.substr(0, chunk.length - 1);
-    }
+    var chunk = filterInput.value;
 
     filterResult.innerHTML = '';
     var p = document.createElement('p');
@@ -143,7 +135,6 @@ filterInput.addEventListener('keyup', function(e) {
         }
     }
 });
-
 
 export {
     loadTowns,
