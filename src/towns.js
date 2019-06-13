@@ -124,7 +124,7 @@ filterInput.addEventListener('keyup', function(e) {
     // это обработчик нажатия кливиш в текстовом поле
     var full = 'full';
 
-    if ((e.key != 'Backspace' && e.key != 'CapsLock') && e.key.charCodeAt(0) >= 65 && e.key.charCodeAt(0) <=90 || e.key.charCodeAt(0) >= 97 && e.key.charCodeAt(0) <=122) {
+    if ((e.key != 'Backspace' && e.key != 'CapsLock' && e.key != 'Shift') && e.key.charCodeAt(0) >= 65 && e.key.charCodeAt(0) <=90 || e.key.charCodeAt(0) >= 97 && e.key.charCodeAt(0) <=122) {
         chunk += e.key;
     } else if (e.key == 'Backspace' && chunk.length > 0) {
         chunk = chunk.substr(0, chunk.length - 1);
