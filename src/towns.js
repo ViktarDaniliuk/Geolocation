@@ -62,6 +62,7 @@ function loadTowns() {
         };
 
         xhr.onerror = function() {
+            var p = document.createElement
             reject(new Error('Не удалось загрузить города'));
         };
 
@@ -123,17 +124,11 @@ filterInput.addEventListener('keyup', function(e) {
     // это обработчик нажатия кливиш в текстовом поле
     var full = 'full';
 
-    if (e.key != 'Backspace' && e.key.charCodeAt(0) >= 65 && e.key.charCodeAt(0) <=90 || e.key.charCodeAt(0) >= 97 && e.key.charCodeAt(0) <=122) {
+    if ((e.key != 'Backspace' && e.key != 'CapsLock') && e.key.charCodeAt(0) >= 65 && e.key.charCodeAt(0) <=90 || e.key.charCodeAt(0) >= 97 && e.key.charCodeAt(0) <=122) {
         chunk += e.key;
     } else if (e.key == 'Backspace' && chunk.length > 0) {
         chunk = chunk.substr(0, chunk.length - 1);
     }
-//    else {
-//        filterInput.onkeypress = function(e) {
-////            e.preventDefault();
-//            return false;/////////////////////////////////
-//        }
-//    }
 
     filterResult.innerHTML = '';
     var p = document.createElement('p');
