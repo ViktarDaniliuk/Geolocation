@@ -62,8 +62,7 @@ function loadTowns() {
         };
 
         xhr.onerror = function() {
-            var p = document.createElement
-            reject(new Error('Не удалось загрузить города'));
+            reject(new Error('Network error'));
         };
 
         xhr.send();
@@ -72,18 +71,46 @@ function loadTowns() {
     return promise;
 }
 
-loadTowns().then(function() {
-    loadingBlock.style.display = 'none';
-    filterBlock.style.display = 'block';
-})
-
 var d = [];
 
-    loadTowns().then(function(towns) {
-        for (var j = 0; j < towns.length; j++) {
-            d.push(towns[j]);
-        }
-    });
+loadTowns()
+            .then(function(towns) {
+                for (var j = 0; j < towns.length; j++) {
+                    d.push(towns[j]);
+                }
+            })
+            .then(function() {
+                loadingBlock.style.display = 'none';
+                filterBlock.style.display = 'block';
+            })
+//            .catch(function(e) {
+//    console.log(e);
+//                createError();
+////                var p = document.createElement('p');
+////                var button = document.createElement('button');
+////
+////                button.innerText = 'Повторить';
+////                loadingBlock.style.display = 'none';
+////                p.innerText = 'Не удалось загрузить города';
+////                homeworkContainer.insertBefore(p, loadingBlock);
+////                homeworkContainer.insertBefore(button, loadingBlock);
+//            })
+//
+//function createError() {
+//    var p = document.createElement('p');
+//    var button = document.createElement('button');
+//
+//    button.innerText = 'Повторить';
+//    loadingBlock.style.display = 'none';
+//    p.innerText = 'Не удалось загрузить города';
+//    homeworkContainer.insertBefore(p, loadingBlock);
+//    homeworkContainer.insertBefore(button, loadingBlock);
+//    button.onclick = function() {
+//        loadTowns().then(function() {
+//            resolve(towns);
+//        });
+//    }
+//}
 
 /*
  Функция должна проверять встречается ли подстрока chunk в строке full
@@ -118,16 +145,16 @@ const filterInput = homeworkContainer.querySelector('#filter-input');
 /* Блок с результатами поиска */
 const filterResult = homeworkContainer.querySelector('#filter-result');
 
-filterInput.addEventListener('keyup', function(e) {
+filterInput.addEventListener('keyup', function() {
     // это обработчик нажатия кливиш в текстовом поле
     var chunk = filterInput.value;
 
     filterResult.innerHTML = '';
-    var p = document.createElement('p');
 
     for (let j = 0; j < d.length; j++) {
-        if(isMatching(d[j].name, chunk) == true && chunk.length != 0) {
+        if (isMatching(d[j].name, chunk) == true && chunk.length != 0) {
             var p = document.createElement('p');
+
             p.innerText = d[j].name;
             filterResult.appendChild(p);
         } else {
