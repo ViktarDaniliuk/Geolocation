@@ -45,8 +45,130 @@ const listTable = homeworkContainer.querySelector('#list-table tbody');
 
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
+    var chunk = filterNameInput.value;
+
+//    filterResult.innerHTML = '';
+
+    for (let i = 0; i < cookies.length; i++) {
+        if (isMatching(cookies[i].name, chunk) == true && chunk.length != 0) {
+//            var p = document.createElement('p');
+//
+//            p.innerText = cookies[i].name;
+//            filterResult.appendChild(p);
+        } else {
+            continue;
+        }
+    }
 });
+
+// поиск по имени cookie
+function isMatching(full, chunk) {
+    var flag = false;
+
+    full = full.toUpperCase();
+    chunk = chunk.toUpperCase();
+
+    if (~full.indexOf(chunk)) {
+        return true;
+    }
+
+    return flag;
+}
+
+// строим таблицу из массива с cookies
+function fillTable(cookies) {
+    var listTableFrag = document.createDocumentFragment();
+
+    for (let i = 0; i < cookies.length; i++) {
+        var tableRow = document.createElement('tr');
+        var firstCell = document.createElement('th');
+        var secondCell = document.createElement('th');
+        var button = document.createElement('button');
+        var name = cookies[i].name;
+        var value = cookies[i].value;
+
+        button.className = 'removeButton';
+        button.innerText = 'Удалить';
+        firstCell.innerText = name;
+        tableRow.append(firstCell);
+        secondCell.innerText = value;
+        tableRow.append(secondCell);
+//        console.log(tableRow);
+        tableRow.appendChild(button);
+        listTableFrag.append(tableRow);
+    }
+
+    return listTableFrag;
+}
+
+// получаем и сортируем все cookies на странице и формируем из них массив объектов {name: name, value: value }
+function getCookies() {
+    var cookiesStr = document.cookie;
+    var cookiesArrHelper = cookiesStr.split('; ');
+    var cookiesArr = [];
+
+    for (var i = 0; i < cookiesArrHelper.length; i++) {
+		var name = cookiesArrHelper[i].split('=')[0];
+		var value = cookiesArrHelper[i].split('=')[1];
+
+        cookiesArr.push({name: name, value: value});
+    }
+
+    cookiesArr.sort(function(a, b) {
+        if (a.name < b.name) {
+            return -1;
+        }
+        if (a.name > b.name) {
+            return 1;
+        }
+    });
+
+    return cookiesArr;
+}
+
+var cookies = getCookies();
+var fillTableFrag;
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
+    var name = addNameInput.value;
+    var value = addValueInput.value;
+    console.log(name);
+    for (let i = 0; i < cookies.length; i++) {
+        if (name == cookies[i].name) {
+            cookies[i].value = value;
+            console.log(cookies[i].value);
+        } else {
+            document.cookie = `${addNameInput.value}=${addValueInput.value}`;
+        }
+    }
+    console.log(cookies);
+    fillTableFrag = fillTable(cookies);
+    listTable.append(fillTableFrag)
+    addNameInput.value = '';
+    addValueInput.value = '';
 });
+
+document.body.addEventListener('click', function(e){
+    var removeName;
+
+    if (e.target.className == 'removeButton') {
+        removeName = e.target.parentElement.firstElementChild.textContent;
+        console.log(removeName);
+        for (let i = 0; i < cookies.length; i++) {
+            console.log(cookies[i].name);
+            console.log(cookies[i].name == removeName);
+            console.log(i)
+            if (cookies[i].name == removeName) {
+                cookies.splice(i, 1);
+                console.log(cookies);
+            } else {
+                continue;
+            }
+        }
+
+    fillTableFrag = fillTable(cookies);
+    console.log(fillTableFrag);
+    listTable.append(fillTableFrag);
+    }
+})
