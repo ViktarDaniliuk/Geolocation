@@ -43,14 +43,16 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
+getCookies();
+
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
     var chunk = filterNameInput.value;
-
+    var cookies = getCookies();
 //    filterResult.innerHTML = '';
 
     for (let i = 0; i < cookies.length; i++) {
-        if (isMatching(cookies[i].name, chunk) == true && chunk.length != 0) {
+        if (isMatching(cookies[i].name, chunk) == true) {
 //            var p = document.createElement('p');
 //
 //            p.innerText = cookies[i].name;
@@ -60,6 +62,19 @@ filterNameInput.addEventListener('keyup', function() {
         }
     }
 });
+
+// фильтрация всего массива с cookies
+function arrFilter(arr) {
+    var filteredArr = [];
+    for (let i = 0; i < arr.length; i++) {
+        if (isMatching(arr[i].name, chunk) == true) {
+            filteredArr.push(arr[i]);
+        } else {
+            continue;
+        }
+    }
+    return filteredArr;
+}
 
 // поиск по имени cookie
 function isMatching(full, chunk) {
@@ -79,6 +94,11 @@ function isMatching(full, chunk) {
 function fillTable(cookies) {
     var listTableFrag = document.createDocumentFragment();
 
+    if (!cookies) {
+        listTable.innerHTML = '';
+        return;
+    }
+
     for (let i = 0; i < cookies.length; i++) {
         var tableRow = document.createElement('tr');
         var firstCell = document.createElement('th');
@@ -93,12 +113,12 @@ function fillTable(cookies) {
         tableRow.append(firstCell);
         secondCell.innerText = value;
         tableRow.append(secondCell);
-//        console.log(tableRow);
         tableRow.appendChild(button);
         listTableFrag.append(tableRow);
     }
 
-    return listTableFrag;
+    listTable.innerHTML = '';
+    listTable.append(listTableFrag);
 }
 
 // получаем и сортируем все cookies на странице и формируем из них массив объектов {name: name, value: value }
@@ -110,6 +130,9 @@ function getCookies() {
     for (var i = 0; i < cookiesArrHelper.length; i++) {
 		var name = cookiesArrHelper[i].split('=')[0];
 		var value = cookiesArrHelper[i].split('=')[1];
+        if (value === '' || name === '') {
+            break;
+        }
 
         cookiesArr.push({name: name, value: value});
     }
@@ -123,30 +146,56 @@ function getCookies() {
         }
     });
 
+    fillTable(cookiesArr);
+
     return cookiesArr;
 }
 
-var cookies = getCookies();
-var fillTableFrag;
+// добавляем новый cookie////////////////////////////////////////////////////////////////////////
+function setCookie(name, value, options) {
+    options = options || {};
+    var expires = options.expires;
+
+    if (typeof expires == "number" && expires) {
+        var d = new Date();
+        d.setTime(d.getTime() + expires * 1000);
+        expires = options.expires = d;
+    }
+    if (expires && expires.toUTCString) {
+        options.expires = expires.toUTCString();
+    }
+
+    var updatedCookie = name + "=" + value;
+
+    for (var propName in options) {
+        updatedCookie += "; " + propName;
+        var propValue = options[propName];
+        if (propValue !== true) {
+            updatedCookie += "=" + propValue;
+        }
+    }
+
+    document.cookie = updatedCookie;
+}////////////////////////////////////////////////////////////////////////////////////////////////
+
+// удаляем cookie ///////////////////////////////////////////////////////////////////////////////
+function deleteCookie(name) {
+  setCookie(name, "", {
+    expires: -1
+  })
+}///////////////////////////////////////////////////////////////////////////////////////////////
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
     var name = addNameInput.value;
     var value = addValueInput.value;
-    console.log(name);
-    for (let i = 0; i < cookies.length; i++) {
-        if (name == cookies[i].name) {
-            cookies[i].value = value;
-            console.log(cookies[i].value);
-        } else {
-            document.cookie = `${addNameInput.value}=${addValueInput.value}`;
-        }
+
+    if (value === '' || name === '') {
+        return;
     }
-    console.log(cookies);
-    fillTableFrag = fillTable(cookies);
-    listTable.append(fillTableFrag)
-    addNameInput.value = '';
-    addValueInput.value = '';
+
+    setCookie(name, value);
+    getCookies();
 });
 
 document.body.addEventListener('click', function(e){
@@ -154,21 +203,9 @@ document.body.addEventListener('click', function(e){
 
     if (e.target.className == 'removeButton') {
         removeName = e.target.parentElement.firstElementChild.textContent;
-        console.log(removeName);
-        for (let i = 0; i < cookies.length; i++) {
-            console.log(cookies[i].name);
-            console.log(cookies[i].name == removeName);
-            console.log(i)
-            if (cookies[i].name == removeName) {
-                cookies.splice(i, 1);
-                console.log(cookies);
-            } else {
-                continue;
-            }
-        }
 
-    fillTableFrag = fillTable(cookies);
-    console.log(fillTableFrag);
-    listTable.append(fillTableFrag);
+        deleteCookie(removeName);
+
+        getCookies();
     }
 })
