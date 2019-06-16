@@ -43,36 +43,33 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
+var chunk;
+
 getCookies();
 
-filterNameInput.addEventListener('keyup', function() {
+filterNameInput.addEventListener('keyup', function(e) {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
-    var chunk = filterNameInput.value;
-    var cookies = getCookies();
-//    filterResult.innerHTML = '';
+    chunk = filterNameInput.value;
 
-    for (let i = 0; i < cookies.length; i++) {
-        if (isMatching(cookies[i].name, chunk) == true) {
-//            var p = document.createElement('p');
-//
-//            p.innerText = cookies[i].name;
-//            filterResult.appendChild(p);
-        } else {
-            continue;
-        }
+    if (e) {
+        getCookies(chunk);
     }
 });
 
 // фильтрация всего массива с cookies
 function arrFilter(arr) {
     var filteredArr = [];
+
     for (let i = 0; i < arr.length; i++) {
-        if (isMatching(arr[i].name, chunk) == true) {
+        if (isMatching(arr[i].name, chunk) == true || isMatching(arr[i].value, chunk) == true) {
             filteredArr.push(arr[i]);
         } else {
             continue;
         }
     }
+
+    fillTable(filteredArr);
+
     return filteredArr;
 }
 
@@ -96,6 +93,7 @@ function fillTable(cookies) {
 
     if (!cookies) {
         listTable.innerHTML = '';
+
         return;
     }
 
@@ -128,13 +126,14 @@ function getCookies() {
     var cookiesArr = [];
 
     for (var i = 0; i < cookiesArrHelper.length; i++) {
-		var name = cookiesArrHelper[i].split('=')[0];
-		var value = cookiesArrHelper[i].split('=')[1];
+        var name = cookiesArrHelper[i].split('=')[0];
+        var value = cookiesArrHelper[i].split('=')[1];
+
         if (value === '' || name === '') {
             break;
         }
 
-        cookiesArr.push({name: name, value: value});
+        cookiesArr.push({ name: name, value: value });
     }
 
     cookiesArr.sort(function(a, b) {
@@ -146,18 +145,23 @@ function getCookies() {
         }
     });
 
-    fillTable(cookiesArr);
+    if (filterNameInput.value) {
+        arrFilter(cookiesArr);
+    } else {
+        fillTable(cookiesArr);
+    }
 
     return cookiesArr;
 }
 
-// добавляем новый cookie////////////////////////////////////////////////////////////////////////
+// добавляем новый cookie
 function setCookie(name, value, options) {
     options = options || {};
     var expires = options.expires;
 
-    if (typeof expires == "number" && expires) {
+    if (typeof expires == 'number' && expires) {
         var d = new Date();
+
         d.setTime(d.getTime() + expires * 1000);
         expires = options.expires = d;
     }
@@ -165,25 +169,26 @@ function setCookie(name, value, options) {
         options.expires = expires.toUTCString();
     }
 
-    var updatedCookie = name + "=" + value;
+    var updatedCookie = name + '=' + value;
 
     for (var propName in options) {
-        updatedCookie += "; " + propName;
+        updatedCookie += '; ' + propName;
         var propValue = options[propName];
+
         if (propValue !== true) {
-            updatedCookie += "=" + propValue;
+            updatedCookie += '=' + propValue;
         }
     }
 
     document.cookie = updatedCookie;
-}////////////////////////////////////////////////////////////////////////////////////////////////
+}
 
-// удаляем cookie ///////////////////////////////////////////////////////////////////////////////
+// удаляем cookie
 function deleteCookie(name) {
-  setCookie(name, "", {
-    expires: -1
-  })
-}///////////////////////////////////////////////////////////////////////////////////////////////
+    setCookie(name, '', {
+        expires: -1
+    })
+}
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
@@ -198,14 +203,13 @@ addButton.addEventListener('click', () => {
     getCookies();
 });
 
-document.body.addEventListener('click', function(e){
+document.body.addEventListener('click', function(e) {
     var removeName;
 
     if (e.target.className == 'removeButton') {
         removeName = e.target.parentElement.firstElementChild.textContent;
 
         deleteCookie(removeName);
-
         getCookies();
     }
 })
