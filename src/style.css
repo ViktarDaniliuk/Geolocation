@@ -1,0 +1,192 @@
+* {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+::-webkit-input-placeholder {
+    color: #9f9f9f;
+    font-size: 15px;
+}
+::-moz-placeholder {
+    color: #9f9f9f;
+    font-size: 15px;
+}
+:-ms-input-placeholder {
+    color: #9f9f9f;
+    font-size: 15px;
+}
+:-moz-placeholder {
+    color: #9f9f9f;
+    font-size: 15px;
+}
+
+body {
+    position: relative;
+}
+
+.container {
+    width: 100%;
+    height: 600px;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+.hidden {
+    display: none;
+}
+
+.form-wrapper {
+    height: 525px;
+    width: 380px;
+    border-radius: 10px;
+    background-color: #fff;
+    overflow: hidden;
+    position: absolute;
+}
+
+.adres {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    color: #fff;
+    padding: 0 10px;
+    background-color: #ff8663;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.adres p {
+    font-size: 12px;
+    margin: 0 auto 0 0;
+    padding-left: 10px;
+}
+
+#close {
+    display: block;
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    position: relative;
+    cursor: pointer;
+}
+
+#close::before,
+#close::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 12px;
+    left: 10px;
+    width: 4px;
+    height: 17px;
+    background-color: #fff;
+    border-radius: 2px;
+    -webkit-transform: rotateZ(45deg);
+    transform: rotateZ(45deg);
+}
+
+#close::after {
+    -webkit-transform: rotateZ(-45deg);
+    transform: rotateZ(-45deg);
+}
+
+.form-inner {
+    padding: 10px;
+}
+
+.comments {
+    width: 100%;
+    height: 150px;
+    overflow-y: scroll;
+}
+
+/*
+    <div class="comment">
+        <p><span class="user-name"></span><span class="place-name"></span></p>
+        <p class="comment-text"></p>
+    </div>
+*/
+
+.comment {
+    padding: 10px 0;
+    line-height: 25px;
+}
+
+.user-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #4f4f4f;
+}
+
+.place-name {
+    font-size: 16px;
+    color: #4f4f4f;
+}
+
+.comment-text {
+    font-size: 15px;
+    color: #4f4f4f;
+}
+
+.separator {
+    height: 0;
+    width: 360px;
+    margin: 0 auto;
+    border-top: 1px solid #f0f0f0;
+}
+
+.form-inner p {
+    font-size: 16px;
+    text-transform: uppercase;
+    color: #ff8663;
+    line-height: 40px;
+}
+
+form {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+
+form input,
+form textarea {
+    width: 100%;
+    height: 35px;
+    border: none;
+    border-radius: 15px;
+    line-height: 30px;
+    margin-bottom: 13px;
+    border: 1px solid #c4c4c4;
+    font-size: 15px;
+    padding-left: 10px;
+}
+
+form textarea {
+    height: 130px;
+    resize: none;
+}
+
+form input[type="submit"] {
+    width: 85px;
+    height: 35px;
+    line-height: 35px;
+    color: #fff;
+    background-color: #ff8663;
+    border: none;
+    padding: 0;
+    text-align: center;
+    -ms-flex-item-align: end;
+    align-self: flex-end;
+    cursor: pointer;
+}
