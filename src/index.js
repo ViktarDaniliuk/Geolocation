@@ -1,15 +1,11 @@
-//ymaps.ready(init);
-
 function init() {
     let myPlacemark;
     let coords;
     let myMap = new ymaps.Map('map', {
             center: [52.237750, 21.018374],
-            zoom: 17,
-            controls: []
+            zoom: 17
         });
     let customItemContentLayout = ymaps.templateLayoutFactory.createClass(
-        // Флаг "raw" означает, что данные вставляют "как есть" без экранирования html.
         '<h2 class=ballon_header>{{ properties.balloonContentHeader|raw }}</h2>' +
             '<div class=ballon_body>{{ properties.balloonContentBody|raw }}</div>' +
             '<div class=ballon_footer>{{ properties.balloonContentFooter|raw }}</div>'
@@ -31,7 +27,6 @@ function init() {
     let getPointData = function (i, key, placeName, comment) {
         console.log('getPointData');
             return {
-//                balloonContentHeader: '<font size=3><b><a target="_blank" href="https://yandex.ru">Здесь может быть ваша ссылка</a></b></font>',
                 balloonContentBody: '<div style="height: 130px"><p style="line-height: 28px"><strong>' + placeName + '</strong></p><p><a href="#">' + key + '</a></p><p style="line-height: 28px">' + comment + '</p></div>',
                 balloonContentFooter: '<p style="text-align: right; font-size: 12px">Здесь будет дата</p>'
             };
@@ -44,57 +39,12 @@ function init() {
                 hasBalloon: false
             };
         };
-//    let points = [];
-//    let geoObjects = [];
     let objPlacemarks = localStorage;
-
-//    for (let key in objPlacemarks) {
-//        if (JSON.parse(localStorage.getItem(key)) !== null) {
-//            coords = JSON.parse(localStorage.getItem(key)).coords;
-//            points.push(coords);
-//        }
-//    }
-
-//    for(var i = 0, len = points.length; i < len; i++) {
-//        geoObjects[i] = new ymaps.Placemark(points[i], getPointData(i), getPointOptions());
-//    }
 
     clusterer.options.set({
         gridSize: 80,
         clusterDisableClickZoom: true
     });
-
-//    clusterer.add(geoObjects);
-//    myMap.geoObjects.add(clusterer);
-
-//    myMap.setBounds(clusterer.getBounds(), {
-//        checkZoomRange: true
-//    });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    let balloon = new ymaps.Balloon(myMap);
-
-
-
-//    clusterer.add(myPlacemark);
-//    myMap.geoObjects.add(clusterer);
 
     // вешаем событие на клик по карте
     myMap.events.add('click', e => {
@@ -108,11 +58,11 @@ function init() {
         getAddress(coords);
 
         createP();
-    })
+    });
 
-    clusterer.events.add('click', function(e) {
-
-    })
+//    clusterer.events.add('click', function(e) {
+//
+//    })
 
     const submitBtn = document.getElementById('submit');
     const geocode = (address) => ymaps.geocode(coords).then(function (res) {
@@ -136,7 +86,7 @@ function init() {
         geocode();
         geocode(address);
         getAddress(coords);
-    }
+    };
     const handleSubmit = e => {
         e.preventDefault();
         console.log('handleSubmit');
@@ -145,13 +95,14 @@ function init() {
             myPlacemark = createPlacemark(coords);
             myPlacemark.events.add('click', handlePlaceMarkClick);
             myMap.geoObjects.add(myPlacemark);
-            clusterer.add(myPlacemark);
-            myMap.geoObjects.add(clusterer);
+//            clusterer.add(myPlacemark);
+//            myMap.geoObjects.add(clusterer);
             closePopup();
         }
-    }
+    };
 
     let i = 0;
+
     for (let key in objPlacemarks) {
         let coords;
         let placeName;
@@ -164,41 +115,15 @@ function init() {
             myPlacemark = createPlacemark(coords, getPointData(i, key, placeName, comment), getPointOptions());
             myPlacemark.events.add('click', handlePlaceMarkClick);
             myMap.geoObjects.add(myPlacemark);
-            clusterer.add(myPlacemark);
+//            clusterer.add(myPlacemark);
         }
-    }
-    myMap.geoObjects.add(clusterer);
+    };
 
-    myMap.setBounds(clusterer.getBounds(), {
-        checkZoomRange: true
-    });
-
-//    console.log(clusterer.getObjectState(myPlacemark));
-
-//    if (clusterer.getObjectState(myPlacemark).isShown) {
-//        myPlacemark.balloon.close();
-//    }
-
-    // наносим существующие маркеры на карту при первом старте
-//    function createAllPlacemark(myMap) {
-////        let objPlacemarks = localStorage;
-//        let coords;
-//        console.log('createAllPlacemark');
-//        for (let key in objPlacemarks) {
-//            if (JSON.parse(localStorage.getItem(key)) !== null) {
-//                coords = JSON.parse(localStorage.getItem(key)).coords;
-////                console.log(coords);
-////                console.log(key);
-//                myPlacemark = createPlacemark(coords, getPointData(), getPointOptions());
-//                myPlacemark.events.add('click', handlePlaceMarkClick);
-//                myMap.geoObjects.add(myPlacemark);
-//                clusterer.add(myPlacemark);
-//            }
-//        }
-//        myMap.geoObjects.add(clusterer);
-//    }
+//    myMap.geoObjects.add(clusterer);
 //
-//    createAllPlacemark(myMap);
+//    myMap.setBounds(clusterer.getBounds(), {
+//        checkZoomRange: true
+//    });
 
     // при нажатии на кнопку "Добавить" проверяем заполнены ли все поля, добавляем placemark на карту, собираем данные с формы,добавляем в localStorage и закрываем окно
     submitBtn.addEventListener('click', handleSubmit);
@@ -387,7 +312,6 @@ function closePopup() {
     var comments = document.querySelector('.comments');
 
     comments.parentElement.parentElement.classList.add('hidden');
-
     // чистим div с комментариями (лучше при помощи функции очистить и комментарии и форму)
     comments.innerHTML = '';
 }
@@ -406,22 +330,3 @@ function setSizeMap() {
 }
 
 setSizeMap();
-
-//// на клик по карте показываем popup
-//document.getElementById('map').addEventListener('click', showPopup);
-//
-//// на клик по крестике скрываем popup
-//document.getElementById('close').addEventListener('click', closePopup);
-//
-//// на клик по кнопке "Добавить" сохраняем данные в localStorage
-//document.getElementById('submit').addEventListener('click', addStore);
-
-
-
-// сделать свои попопы (всплывающие окна)
-// сделать свои balloons (кружочки показвающие отзывы)
-// от яндекса нужно взять плэйсмарк в типах геообъектов (объекты на карте)
-// GeoObjectCollection
-// геообъект - это объект на карте, который имеет какие-то свойства, по которому можно кликнуть и получить дополнительную информацию (которые можно создать при помощи placemark)
-//
-//
