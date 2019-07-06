@@ -25,14 +25,12 @@ function init() {
         placemarkOpenBalloonOnClick: false
     });
     let getPointData = function (key, placeName, comment, date) {
-//        console.log('getPointData');
             return {
                 balloonContentBody: '<div style="height: 130px"><p style="line-height: 28px"><strong>' + placeName + '</strong></p><p><a href="#">' + key + '</a></p><p style="line-height: 28px">' + comment + '</p></div>',
                 balloonContentFooter: '<p style="text-align: right; font-size: 12px">' + date + '</p>'
             };
         };
     let getPointOptions = function () {
-//        console.log('getPointOptions');
             return {
                 preset: 'islands#violetDotIconWithCaption',
                 draggable: false,
@@ -40,64 +38,29 @@ function init() {
             };
         };
     let objPlacemarks = localStorage;
-
-//    clusterer.options.set({
-//        gridSize: 80,
-//        clusterDisableClickZoom: true
-//    });
-//
-//    // вешаем событие на клик по карте
-//    myMap.events.add('click', e => {
-//
-//        // получаем координаты клика
-//        coords = e.get('coords');
-//        // на клик по карте показываем popup
-//        showPopup();
-//        // полчаем адрес и добавляем его в popup
-//        getAddress(coords);
-//
-//        createP();
-//    });
-//
-//    // скрываем popup при клике по кластеру
-//    myMap.events.add('balloonopen', function (e) {
-//        closePopup();
-//    });
-//
-//    myMap.events.add('click', function (e) {
-//        if (!!myMap.balloon.isOpen()) {
-//            myMap.balloon.close();
-//        }
-//    });
-
     const submitBtn = document.getElementById('submit');
     const geocode = (address) => ymaps.geocode(coords).then(function (res) {
-        let comment;
+        let commentsBlock;
         let adr;
         let firstGeoObject = res.geoObjects.get(0);
         let comments = document.querySelector('.comments');
-        console.log('geocode');
+
         adr = firstGeoObject.getAddressLine();
-        console.log('geocode: ' + adr);
         if (adr !== address) {
             comments.innerHTML = '';
-            comment = localStorage.getItem(adr);
-            console.log('geocode: ' + comment);
-            createComment(comment);
+            commentsBlock = localStorage.getItem(adr);
+            createComments(commentsBlock);
         }
     });
     const handlePlaceMarkClick = e => {
-        let address = document.getElementById('address').textContent; // убедиться, что это лишняя строка и удалить
-        console.log('handlePlaceMarkClick');
+        let address = document.getElementById('address').textContent;
+
         coords = e.get('coords');
-        console.log(coords);
-        geocode();
-//        geocode(address);
+        geocode(address);
         getAddress(coords);
     };
     const handleSubmit = e => {
         e.preventDefault();
-        console.log('handleSubmit');
         if (isFormCompleted()) {
             let address = document.getElementById('address').textContent;
             let placeName = document.getElementById('place-name').value;
@@ -121,14 +84,17 @@ function init() {
 
             if (localStorage.length === 0) return;
             if (JSON.parse(localStorage.getItem(key)) !== null) {
-                coords = JSON.parse(localStorage.getItem(key)).coords;
-                placeName = JSON.parse(localStorage.getItem(key)).placeName;
-                comment = JSON.parse(localStorage.getItem(key)).comment;
-                date = JSON.parse(localStorage.getItem(key)).date;
-                myPlacemark = createPlacemark(coords, getPointData(key, placeName, comment, date), getPointOptions());
-                myPlacemark.events.add('click', handlePlaceMarkClick);
-                myMap.geoObjects.add(myPlacemark);
-                clusterer.add(myPlacemark);
+
+                JSON.parse(localStorage.getItem(key)).forEach(function(item, i, arr) {
+                    coords = item.coords;
+                    placeName = item.placeName;
+                    comment = item.comment;
+                    date = item.date;
+                    myPlacemark = createPlacemark(coords, getPointData(key, placeName, comment, date), getPointOptions());
+                    myPlacemark.events.add('click', handlePlaceMarkClick);
+                    myMap.geoObjects.add(myPlacemark);
+                    clusterer.add(myPlacemark);
+                })
             }
         };
 
@@ -139,10 +105,10 @@ function init() {
         if (e.target.hasAttribute('href')) {
             let key = e.target.textContent;
             let comment;
-            let address = document.getElementById('address').textContent = key;
 
+            document.getElementById('address').textContent = key;
             comment = localStorage.getItem(key);
-            createComment(comment);
+            createComments(comment);
             showPopup();
             myMap.balloon.close();
         }
@@ -194,14 +160,12 @@ ymaps.ready(init);
 
 // получаем адрес по координатам и добавляем в форму
 function getAddress(coords) {
-    console.log('getAddress');
     var adr;
     var myAdr = ymaps.geocode(coords).then(function (res) {
         var firstGeoObject = res.geoObjects.get(0);
 
         // добавляем адресс в форму
         adr = firstGeoObject.getAddressLine();
-        console.log('getAddress: ' + adr);
         document.getElementById('address').innerHTML = adr;
     });
 }
@@ -217,13 +181,11 @@ function getDate() {
     let currentSeconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
     let currentDate = `${currentYear}.${currentMonth}.${currentDay} ${currentHours}:${currentMinutes}:${currentSeconds}`;
 
-    console.log(currentDate);
     return currentDate;
 }
 
 // создаем параграф с сообщением об отсутствии отзывав
 function createP() {
-    console.log('createP');
     var comments = document.querySelector('.comments');
     var p = document.createElement('p');
 
@@ -241,54 +203,54 @@ function createPlacemark(coords, fn, fnc) {
     return new ymaps.Placemark(coords, fn, fnc);
 }
 
+// создание блока сожержащего блоки отдельных отзывов
+function createComments(commentsArray) {
+    let frag = document.createDocumentFragment();
+    let comments = document.querySelector('.comments');
+    let comment;
+
+    commentsArray = JSON.parse(commentsArray);
+    commentsArray.forEach(function(item, i, arr){
+        comment = createComment(item);
+        frag.append(comment);
+    })
+
+    showPopup();
+    comments.append(frag);
+}
+
 // создание блока отзыва
 function createComment(commentObj) {
-    console.log('createComment');
-    let frag = document.createDocumentFragment();
     let comment = document.createElement('div');
     let p = document.createElement('p');
     let name = document.createElement('span');
-    let br = document.createElement('br');
     let placeName = document.createElement('span');
     let commentText = document.createElement('p');
-    let comments = document.querySelector('.comments');
     let pText = document.querySelector('.text');
     let date = document.createElement('span');
     let firstSpace = document.createElement('span');
     let secondSpace = document.createElement('span');
 
-    commentObj = JSON.parse(commentObj);
-    console.log(commentObj);
-    console.log('1');
     comment.className = 'comment';
     name.className = 'user-name';
     name.innerText = commentObj.name;
-    console.log('2');
     placeName.className = 'place-name';
     placeName.innerText = commentObj.placeName;
-    console.log('3');
     date.innerText = commentObj.date;
-    console.log('4');
     date.style.fontSize = 14 + 'px';
     firstSpace.innerText = ' ';
     secondSpace.innerText = ' ';
     commentText.className = 'comment-text';
     commentText.innerText = commentObj.comment;
-    console.log('5');
     p.append(name);
     p.append(firstSpace);
     p.append(placeName);
     p.append(secondSpace);
     p.append(date);
-    console.log('6');
     comment.append(p);
     comment.append(commentText);
-    console.log('7');
-    frag.append(comment);
-    console.log('8');
-    showPopup();
-    console.log('9');
-    comments.append(frag);
+
+    return comment;
 }
 
 // ----------------------------------------------------------------------
@@ -312,43 +274,45 @@ function createForm() {
 
 // очистка формы после отправки данных в localStorage
 function cleanForm() {
-    console.log('cleanForm');
     document.form.reset();
 }
 
-// -----------------------------------------------------------------------
 // собираем данные со всех полей формы (в т.ч. координаты), создаем объект и добавляем его в localStorage
 function addStore(coords) {
-    console.log('addStore');
     let address = document.getElementById('address').textContent;
     let name = document.getElementById('name');
     let placeName = document.getElementById('place-name');
     let comment = document.getElementById('comment');
     let commentBlock = {};
+    let commentsBlock = [];
     let date = getDate();
+    let objPlacemarks = localStorage;
+    let flag = true;
 
     commentBlock.name = name.value;
     commentBlock.placeName = placeName.value;
     commentBlock.comment = comment.value;
     commentBlock.coords = coords;
     commentBlock.date = date;
-    // если адресс существует, то создавать массив объктов и
-    localStorage.setItem(address, JSON.stringify(commentBlock));
+
+    for (let key in objPlacemarks) {
+        if (key === address) {
+            commentsBlock = JSON.parse(objPlacemarks[key]);
+            commentsBlock.push(commentBlock);
+            flag = false;
+            break;
+        }
+    }
+
+    if (flag) {
+        commentsBlock.push(commentBlock);
+    }
+    localStorage.setItem(address, JSON.stringify(commentsBlock));
     cleanForm();
 }
-// -----------------------------------------------------------------------
-
-// -----------------------------------------------------------------------
-// получаем данные с localStorage и добывляем их в блоки с комментариями
-function getStore() {
-    console.log('getStore');
-
-}
-// -----------------------------------------------------------------------
 
 // проверяем заполнены ли все поля формы
 function isFormCompleted() {
-    console.log('isFormCopleted');
     let name = document.getElementById('name').value;
     let placeName = document.getElementById('place-name').value;
     let comment = document.getElementById('comment').value;
@@ -363,7 +327,6 @@ function isFormCompleted() {
 
 // показываем popup
 function showPopup() {
-    console.log('showPopup');
     var form = document.querySelector('.form-wrapper');
 
     form.classList.remove('hidden');
@@ -371,14 +334,11 @@ function showPopup() {
 
 // позиционирование popup
 function positioningPopup(e) {
-    console.log('positioningPopup');
     var top = e.clientY;
     var left = e.clientX;
     var screenHeight = window.innerHeight;
     var screenWidth = window.innerWidth;
     var form = document.querySelector('.form-wrapper');
-
-//    form.classList.remove('hidden');
 
     // контролируем, что бы popup не выходило за пределы карты по высоте
     if (top < 205) {
@@ -400,7 +360,6 @@ function positioningPopup(e) {
 
 // закрываем popup
 function closePopup() {
-    console.log('closePopup');
     var comments = document.querySelector('.comments');
 
     comments.parentElement.parentElement.classList.add('hidden');
@@ -410,7 +369,6 @@ function closePopup() {
 
 // получаем размер экрана
 function setSizeMap() {
-    console.log('setSizeMap');
     var screenHeight = window.innerHeight;
     var container = document.querySelector('.container');
 
